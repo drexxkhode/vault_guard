@@ -15,7 +15,7 @@ const port = 5000;
 
 const sessionStore = new MySQLStore({}, db.promise());
 app.set('trust proxy', 1); // Trust first proxy (for Heroku or similar environments)
-app.delete('x-powered-by'); // Disable 'X-Powered-By' header for security
+app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
 
 app.use(cors({
   origin: 'http://localhost:3000', // adjust for your frontend
@@ -31,7 +31,7 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 20, // 1 day
     httpOnly: true,
-    secure: true, // set to true if using https   
+    secure: false, // set to true if using https   
     sameSite: 'lax', // adjust based on your needs
   },
 }));
