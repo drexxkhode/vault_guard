@@ -1,0 +1,15 @@
+.userprofile-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  text-align: center;
+  margin-bottom: 24px;
+}
+.userprofile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 12px;
+  border: 3px solid #007bff;
+}
