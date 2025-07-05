@@ -14,14 +14,13 @@ app.use(express.urlencoded({ extended: true }));
 const port = 5000;
 
 const sessionStore = new MySQLStore({}, db.promise());
-app.set('trust proxy', 1); // Trust first proxy (for Heroku or similar environments)
-app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
+//app.set('trust proxy', 1); // Trust first proxy (for Heroku or similar environments)
+//app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
 
 app.use(cors({
   origin: 'http://localhost:3000', // adjust for your frontend
   credentials: true,
 }));
-app.use(express.json());
 app.use(session({
   key: 'user_sid',
   secret: process.env.SESSION_SECRET,
@@ -37,12 +36,10 @@ app.use(session({
 }));
 
 
-
-
 app.post('/register', (req, res) => {
-  const { username, password } = req.body;
+  const { name,auth, password,status } = req.body;
   const query = 'INSERT INTO website (name, auth,password,status) VALUES (?, ?,?,?)';
-  db.query(query, [username, password], (err, results) => {
+  db.query(query, [name,auth, password,status], (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.status(200).json({ message: 'Data Added Successfully' });
   });
@@ -78,7 +75,7 @@ app.get('/session', (req, res) => {
 
 app.post('/logout', (req, res) => {
   req.session.destroy();
-  res.clearCookie('user_id'); // Clear session cookie
+  res.clearCookie('user_sid'); // Clear session cookie
   res.status(200).json({ message: 'Logged out' });
 });
 

@@ -14,4 +14,4 @@ const pool = mysql.createPool({
 });
 
 
-module.exports =pool;
+module.exports =pool; // Export the promise-based pool for async/await usage

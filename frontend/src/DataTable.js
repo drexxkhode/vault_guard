@@ -85,6 +85,7 @@ const DataTable = () => {
                 onChange={e => setForm({ ...form, name: e.target.value })}
                 disabled={adding}
                 autoFocus
+                className="modal-input"
               />
               <input
                 type="text"
@@ -92,6 +93,7 @@ const DataTable = () => {
                 value={form.auth}
                 onChange={e => setForm({ ...form, auth: e.target.value })}
                 disabled={adding}
+                className="modal-input"
               />
               <input
                 type="text"
@@ -99,6 +101,7 @@ const DataTable = () => {
                 value={form.password}
                 onChange={e => setForm({ ...form, password: e.target.value })}
                 disabled={adding}
+                className="modal-input"
               />
               <input
                 type="text"
@@ -106,6 +109,7 @@ const DataTable = () => {
                 value={form.status}
                 onChange={e => setForm({ ...form, status: e.target.value })}
                 disabled={adding}
+                className="modal-input"
               />
               {addError && <div style={{ color: 'red', marginBottom: 8 }}>{addError}</div>}
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
