@@ -1,6 +1,6 @@
 import React from 'react';
 import './UserProfile.css';
-const API = process.env.REACT_APP_API_URL; // Fallback for local development
+
 const UserProfile = ({ username }) => {
   return (
     <div className="userprofile-container">
