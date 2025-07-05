@@ -6,10 +6,10 @@ import UserProfile from './UserProfile';
 import Footer from './Footer';
 import Login from './Login';
 import './App.css';
-
+const API=process.env.REACT_APP_API_URL;
 async function logoutFromBackend() {
   try {
-    await fetch('http://localhost:5000/logout', {
+    await fetch(`${API}/logout`, {
       method: 'POST',
       credentials: 'include',
     });
@@ -27,7 +27,7 @@ useEffect(() => {
   // always run once on mount
   (async () => {
     try {
-      const res = await fetch('http://localhost:5000/session', {
+      const res = await fetch(`${API}/session`, {
         credentials: 'include'
       });
       if (res.ok) {

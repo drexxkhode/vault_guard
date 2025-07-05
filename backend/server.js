@@ -18,7 +18,7 @@ app.set('trust proxy', 1); // Trust first proxy (for Heroku or similar environme
 app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
 
 app.use(cors({
-  origin: 'http://localhost:3000', // adjust for your frontend
+  origin: 'http://vaultguard.onrender.com', // adjust for your frontend
   credentials: true,
 }));
 app.use(session({

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './DataTable.css';
-
+const API = process.env.REACT_APP_API_URL; // Fallback for local development
 const DataTable = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ const DataTable = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/data', { credentials: 'include' });
+      const response = await fetch(`${API}/data`, { credentials: 'include' });
       if (!response.ok) throw new Error('Failed to fetch data');
       const users = await response.json();
       
@@ -42,7 +42,7 @@ const DataTable = () => {
     }
     setAdding(true);
     try {
-      const response = await fetch('http://localhost:5000/register', {
+      const response = await fetch(`${API}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

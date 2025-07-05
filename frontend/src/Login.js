@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Login.css';
-
+const API = process.env.REACT_APP_API_URL; // Fallback for local development
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -9,7 +9,7 @@ function Login({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:5000/login', {
+    const res = await fetch(`${API}/login`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
