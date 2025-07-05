@@ -5,17 +5,17 @@ const MySQLStore = require('express-mysql-session')(session);
 const dotenv = require('dotenv');
 const db = require('./db');
 const bcrypt = require('bcryptjs');
+const helmet = require('helmet');
 
 dotenv.config();
 
 const app = express();
+app.use(helmet())
 app.use(express.json({ limit: '10mb' })); // Increase body size limit if needed
 app.use(express.urlencoded({ extended: true }));
 const port = 5000;
 
 const sessionStore = new MySQLStore({}, db.promise());
-//app.set('trust proxy', 1); // Trust first proxy (for Heroku or similar environments)
-//app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
 
 app.use(cors({
   origin: 'https://vaultguard-oa58.onrender.com', // adjust for your frontend
