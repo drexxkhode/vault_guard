@@ -60,7 +60,7 @@ useEffect(() => {
       <div className="main-content">
         <Navbar onLogout={handleLogout} />
         <div className="content-area">
-          <UserProfile username={user.username}  />
+          <UserProfile  />
           <DataTable />
         </div>
         <Footer />
