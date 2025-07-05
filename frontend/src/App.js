@@ -21,37 +21,49 @@ async function logoutFromBackend() {
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({ username: '' });
+  const [loading, setLoading] = useState(true);
 
- // App.jsx
-useEffect(() => {
-  // always run once on mount
-  (async () => {
-    try {
-      const res = await fetch(`${API}/session`, {
-        credentials: 'include'
-      });
-      if (res.ok) {
-        const { user } = await res.json();
-        setUser(user);
-        setLoggedIn(true);          // <- only set true when session confirmed
-      } else {
+  useEffect(() => {
+    setLoading(true);
+    (async () => {
+      try {
+        const res = await fetch(`${API}/session`, {
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.loggedIn) {
+            setUser(data.user);
+            setLoggedIn(true);
+          } else {
+            setLoggedIn(false);
+            setUser({ username: '' });
+          }
+        } else {
+          setLoggedIn(false);
+          setUser({ username: '' });
+        }
+      } catch (err) {
         setLoggedIn(false);
+        setUser({ username: '' });
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-      setLoggedIn(false);
-    }
-  })();
-}, []);
-
+    })();
+  }, []);
 
   const handleLogout = async () => {
     await logoutFromBackend();
     setLoggedIn(false);
+    setUser({ username: '' });
   };
 
+  if (loading) return <div>Loading...</div>;
   if (!loggedIn) {
-    return <Login onLogin={() => setLoggedIn(true)} />;
+    return <Login onLogin={() => {
+      setLoggedIn(true);
+      // Optionally re-fetch user info here
+    }} />;
   }
 
   return (
@@ -60,7 +72,7 @@ useEffect(() => {
       <div className="main-content">
         <Navbar onLogout={handleLogout} />
         <div className="content-area">
-          <UserProfile  />
+          <UserProfile username={user.username || ''} />
           <DataTable />
         </div>
         <Footer />
