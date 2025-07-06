@@ -76,7 +76,7 @@ const DataTable = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Add New User</h3>
+            <h3>Add New Site</h3>
             <form onSubmit={handleAddData} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <input
                 type="text"
@@ -114,7 +114,7 @@ const DataTable = () => {
               {addError && <div style={{ color: 'red', marginBottom: 8 }}>{addError}</div>}
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                 <button type="button" onClick={() => setShowModal(false)} className="modal-cancel-btn">Cancel</button>
-                <button type="submit" disabled={adding} className="modal-add-btn">Add User</button>
+                <button type="submit" disabled={adding} className="modal-add-btn">Add site</button>
               </div>
             </form>
           </div>
