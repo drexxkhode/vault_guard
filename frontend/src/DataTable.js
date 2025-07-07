@@ -71,11 +71,7 @@ const DataTable = () => {
         onClick={() => setShowModal(true)}
         style={{ marginBottom: 16 }}
       >
-<<<<<<< HEAD
         + Add Site
-=======
-        + Add site
->>>>>>> ac14b57cf9a9d9a699e426c68a92f678e49a8b2e
       </button>
       {showModal && (
         <div className="modal-overlay">
