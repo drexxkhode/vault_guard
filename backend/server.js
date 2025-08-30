@@ -40,7 +40,7 @@ app.post('/register', (req, res) => {
   const { name,auth, password,status } = req.body;
   const query = 'INSERT INTO website (name, auth,password,status) VALUES (?, ?,?,?)';
   db.query(query, [name,auth, password,status], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) return res.status(500).json({ message: 'Internal server error' });
     res.status(200).json({ message: 'Data Added Successfully' });
   });
 });
@@ -49,12 +49,12 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const query = 'SELECT * FROM user WHERE username = ?';
   db.query(query, [username], async (err, results) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) return res.status(500).json({ message: 'Internal server error' });
     if (results.length > 0) {
       const user = results[0];
       const match = await bcrypt.compare(password, user.password);
       if (match) {
-        req.session.user = user;
+        req.session.user = { id: user.id, username: user.username };
         res.status(200).json({ message: 'Logged in' });
       } else {
         res.status(401).json({ message: 'Invalid credentials' });
@@ -75,15 +75,20 @@ app.get('/session', (req, res) => {
 
 app.post('/logout', (req, res) => {
   req.session.destroy();
-  res.clearCookie('user_sid'); // Clear session cookie
-  res.status(200).json({ message: 'Logged out' });
+  sessionStore.destroy(req.sessionID, (err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+    res.clearCookie('user_sid'); // Clear session cookie
+    res.status(200).json({ message: 'Logged out' });
+  });
 });
 
 // API endpoint to get all registered users (for display)
 app.get('/data', (req, res) => {
   const query = 'SELECT * FROM website';
   db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) return res.status(500).json({ message: 'Internal server error' });
     res.status(200).json(results);
   });
 });
