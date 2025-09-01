@@ -55,7 +55,7 @@ app.post('/login', async (req, res) => {
       const user = results[0];
       const match = await bcrypt.compare(password, user.password);
       if (match) {
-        req.session.user = user;
+        req.session.user = { id: user.id, username: user.username };
         activityLogger('LOGIN', `User logged in : ${user.username}`)(req, res, () => {});
         res.status(200).json({ message: 'Logged in' });
       } else {
