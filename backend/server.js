@@ -6,6 +6,8 @@ const dotenv = require('dotenv');
 const db = require('./db');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
+const logger = require("./service/logger");
+const activityLogger= require("./middleware/activityLogger");
 
 dotenv.config();
 
@@ -55,11 +57,15 @@ app.post('/login', async (req, res) => {
       const match = await bcrypt.compare(password, user.password);
       if (match) {
         req.session.user = { id: user.id, username: user.username };
+        logger.info("LOGIN", );
+        activityLogger("LOGIN",`user: ${username} logged in.` )(req,res,()=>{});
         res.status(200).json({ message: 'Logged in' });
       } else {
+        activityLogger("ATTEMPTED LOGIN", `user: ${username} and password: ${password} attempted a login.` )(req,res,()=>{});
         res.status(401).json({ message: 'Invalid credentials' });
       }
     } else {
+      activityLogger("ATTEMPTED LOGIN (USER NOT FOUND)", `user: ${username} and password: ${password} attempted a login.` )(req,res,()=>{});
       res.status(401).json({ message: 'Invalid credentials' });
     }
   });
