@@ -78,7 +78,7 @@ app.get('/session', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  activityLogger('LOGOUT', `User logged out: ${req.session?.user?.username}`)(req, res, () => {});
+  activityLogger('LOGOUT', `User logged out: ${req.session.user.username}`)(req, res, () => {});
   req.session.destroy();
   res.clearCookie('user_sid'); // Clear session cookie
   res.status(200).json({ message: 'Logged out' });
