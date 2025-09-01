@@ -17,7 +17,8 @@ format: winston.format.combine(
 
 ),
 transports : [
-    TCP
+    TCP,
+    new winston.transports.Console()
 ]
 });
 
