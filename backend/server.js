@@ -56,14 +56,14 @@ app.post('/login', async (req, res) => {
       const match = await bcrypt.compare(password, user.password);
       if (match) {
         req.session.user = { id: user.id, username: user.username };
-        activityLogger('LOGIN', `User logged in : ${user.username}`)(req, res, () => {});
+        activityLogger('LOGIN', `User logged in: ${user.username}`)(req, res, () => {});
         res.status(200).json({ message: 'Logged in' });
       } else {
-        activityLogger('FAILED LOGIN', `Failed login attempt for user: ${username} AND password: ${password}`)(req, res, () => {});
+        activityLogger('FAILED LOGIN', `Failed login attempt for user: ${username}`)(req, res, () => {});
         res.status(401).json({ message: 'Invalid credentials' });
       }
     } else {
-      activityLogger('USER NOT FOUND', `Failed login attempt for user: ${username} AND password: ${password}`)(req, res, () => {});
+      activityLogger('USER NOT FOUND', `Failed login attempt for user: ${username}`)(req, res, () => {});
       res.status(401).json({ message: 'Invalid credentials' });
     }
   });
@@ -78,10 +78,15 @@ app.get('/session', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  activityLogger('LOGOUT', `User logged out: ${req.session.user.username}`)(req, res, () => {});
-  req.session.destroy();
-  res.clearCookie('user_sid'); // Clear session cookie
-  res.status(200).json({ message: 'Logged out' });
+  if (!req.session.user) return res.status(400).json({ message: 'No active session' });
+
+  const username = req.session.user.username;
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ message: 'Logout failed' });
+    res.clearCookie('user_sid');
+    activityLogger('LOGOUT', `User logged out: ${username}`)(req, res, () => {});
+    res.status(200).json({ message: 'Logged out' });
+  });
 });
 
 // API endpoint to get all registered users (for display)
