@@ -82,7 +82,7 @@ app.post('/logout', (req, res) => {
   const username = req.session?.user?.username;
 
   // Run logger first, while session still exists
-  activityLogger('LOGOUT', `User logged out: ${username}`)(req, res, () => {
+  activityLogger('LOGOUT', `User logged out: ${username}`)(req, res, () => {});
     req.session.destroy((err) => {
       if (err) return res.status(500).json({ message: 'Logout failed' });
 
@@ -90,7 +90,7 @@ app.post('/logout', (req, res) => {
       res.status(200).json({ message: 'Logged out' });
     });
   });
-});
+
 
 // API endpoint to get all registered users (for display)
 app.get('/data', (req, res) => {
