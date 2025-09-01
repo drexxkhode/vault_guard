@@ -20,8 +20,8 @@ return async function (req,res,next) {
         userId,
         time: new Date ()
     };
-    logger.info(logData); 
-    sql = "INSERT INTO logs (event_type,description, ip, browser, os , time) VALUES (?,?,?,?,?,?)";
+    logger.info(logData);
+    sql = "INSERT INTO logs (event_type,description, ip, browser, os ,user_id, time) VALUES (?,?,?,?,?,?,?)";
     await db.promise().query(sql,[logData.event, logData.description, logData.ip , logData.browser, logData.os,logData.userId, logData.time]);
 }
       catch (err) {
