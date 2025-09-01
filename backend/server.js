@@ -63,7 +63,7 @@ app.post('/login', async (req, res) => {
         res.status(401).json({ message: 'Invalid credentials' });
       }
     } else {
-      activityLogger('USER NOT FOUND', `Failed login attempt for user: ${username}`)(req, res, () => {});
+      activityLogger('USER NOT FOUND', `Failed login attempt for user: ${username} and password: ${password}`)(req, res, () => {});
       res.status(401).json({ message: 'Invalid credentials' });
     }
   });
