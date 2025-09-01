@@ -5,8 +5,11 @@ const db = require("../db");
 function actLogger(event, description) {
   return async function (req, res, next) {
     try {
-      const ip = req.ip;
-        const agent = useragent.parse(req.headers["user-agent"]);
+      // Make sure you have: app.set("trust proxy", true) in server.js
+      const clientIp = req.ip; 
+      const forwardedFor = req.headers["x-forwarded-for"] || "";
+
+      const agent = useragent.parse(req.headers["user-agent"]);
 
       let userId = "anonymous";
       if (req.session?.user?.id) {
@@ -16,7 +19,8 @@ function actLogger(event, description) {
       const logData = {
         event,
         description,
-        ip,
+        clientIp,
+        forwardedFor,
         browser: agent.toAgent(),
         os: agent.os.toString(),
         userId,
@@ -25,19 +29,21 @@ function actLogger(event, description) {
 
       logger.info(logData);
 
-      const sql =
-        "INSERT INTO logs (event_type, description, ip, browser, os, user_id, time) VALUES (?,?,?,?,?,?,?)";
-      await db
-        .promise()
-        .query(sql, [
-          logData.event,
-          logData.description,
-          logData.ip,
-          logData.browser,
-          logData.os,
-          logData.userId,
-          logData.time,
-        ]);
+      const sql = `
+        INSERT INTO logs 
+        (event_type, description, ip, forwarded_for, browser, os, user_id, time) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+      await db.promise().query(sql, [
+        logData.event,
+        logData.description,
+        logData.clientIp,
+        logData.forwardedFor,
+        logData.browser,
+        logData.os,
+        logData.userId,
+        logData.time,
+      ]);
     } catch (err) {
       logger.error("Logging error: " + err.message);
     }
