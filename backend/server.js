@@ -78,18 +78,26 @@ app.get('/session', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  
-  const username = req.session.user.username;
+  // If no active session, just log anonymous logout attempt
+  if (!req.session.user) {
+    activityLogger('LOGOUT', `Logout attempt with no active session`)(req, res, () => {});
+    return res.status(400).json({ message: 'No active session' });
+  }
 
-  // Run logger first, while session still exists
-  activityLogger('LOGOUT', `User logged out: ${username}`)(req, res, () => {});
+  const username = req.session.user.username || 'Unknown';
+
+  // Run logger before destroying the session
+  activityLogger('LOGOUT', `User logged out: ${username}`)(req, res, () => {
     req.session.destroy((err) => {
-      if (err) return res.status(500).json({ message: 'Logout failed' });
+      if (err) {
+        return res.status(500).json({ message: 'Logout failed' });
+      }
 
       res.clearCookie('user_sid');
       res.status(200).json({ message: 'Logged out' });
     });
   });
+});
 
 
 // API endpoint to get all registered users (for display)
