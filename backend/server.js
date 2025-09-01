@@ -35,7 +35,7 @@ app.use(session({
     sameSite: 'lax', // adjust based on your needs
   },
 }));
-
+app.set('trust proxy', 1); // if behind a proxy like nginx
 
 app.post('/register', (req, res) => {
   const { name,auth, password,status } = req.body;
