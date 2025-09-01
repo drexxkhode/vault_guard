@@ -78,10 +78,7 @@ app.get('/session', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  if (!req.session.user) {
-    return res.status(400).json({ message: 'No active session' });
-  }
-
+  
   const username = req.session.user.username;
 
   // Run logger first, while session still exists
