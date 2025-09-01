@@ -5,8 +5,8 @@ const db = require("../db");
 function actLogger(event, description) {
   return async function (req, res, next) {
     try {
-      const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-      const agent = useragent.parse(req.headers["user-agent"]);
+      const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+        const agent = useragent.parse(req.headers["user-agent"]);
 
       let userId = "anonymous";
       if (req.session?.user?.id) {
