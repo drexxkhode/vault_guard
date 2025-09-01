@@ -83,8 +83,8 @@ app.post('/logout', (req, res) => {
   const username = req.session.user.username;
   req.session.destroy((err) => {
     if (err) return res.status(500).json({ message: 'Logout failed' });
-    res.clearCookie('user_sid');
     activityLogger('LOGOUT', `User logged out: ${username}`)(req, res, () => {});
+    res.clearCookie('user_sid');
     res.status(200).json({ message: 'Logged out' });
   });
 });
