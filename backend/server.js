@@ -46,7 +46,7 @@ app.post('/register', (req, res) => {
   });
 });
 
-app.post('/login', activityLogger('LOGIN', 'User attempted login' ), async (req, res) => {
+app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const query = 'SELECT * FROM user WHERE username = ?';
   db.query(query, [username], async (err, results) => {
