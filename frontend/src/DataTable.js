@@ -65,7 +65,7 @@ const DataTable = () => {
 
   return (
     <div className="datatable-container">
-      <h2>User Data</h2>
+      <h2>Sites</h2>
       <button
         className="add-user-btn"
         onClick={() => setShowModal(true)}
