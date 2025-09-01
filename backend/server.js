@@ -78,14 +78,20 @@ app.get('/session', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  if (!req.session.user) return res.status(400).json({ message: 'No active session' });
+  if (!req.session.user) {
+    return res.status(400).json({ message: 'No active session' });
+  }
 
   const username = req.session.user.username;
-  req.session.destroy((err) => {
-    if (err) return res.status(500).json({ message: 'Logout failed' });
-    activityLogger('LOGOUT', `User logged out: ${username}`)(req, res, () => {});
-    res.clearCookie('user_sid');
-    res.status(200).json({ message: 'Logged out' });
+
+  // Run logger first, while session still exists
+  activityLogger('LOGOUT', `User logged out: ${username}`)(req, res, () => {
+    req.session.destroy((err) => {
+      if (err) return res.status(500).json({ message: 'Logout failed' });
+
+      res.clearCookie('user_sid');
+      res.status(200).json({ message: 'Logged out' });
+    });
   });
 });
 
