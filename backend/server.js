@@ -6,7 +6,8 @@ const dotenv = require('dotenv');
 const db = require('./db');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
-
+const logger = require('./service/logger');
+const activityLogger=  require("./middleware/activityLogger");
 dotenv.config();
 
 const app = express();
@@ -55,11 +56,14 @@ app.post('/login', async (req, res) => {
       const match = await bcrypt.compare(password, user.password);
       if (match) {
         req.session.user = user;
+        activityLogger('LOGIN', `User logged in : ${user.username}`)(req, res, () => {});
         res.status(200).json({ message: 'Logged in' });
       } else {
+        activityLogger('FAILED LOGIN', `Failed login attempt for user: ${username} AND password: ${password}`)(req, res, () => {});
         res.status(401).json({ message: 'Invalid credentials' });
       }
     } else {
+      activityLogger('USER NOT FOUND', `Failed login attempt for user: ${username} AND password: ${password}`)(req, res, () => {});
       res.status(401).json({ message: 'Invalid credentials' });
     }
   });
@@ -74,6 +78,7 @@ app.get('/session', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
+  activityLogger('LOGOUT', `User logged out: ${req.session?.user?.username}`)(req, res, () => {});
   req.session.destroy();
   res.clearCookie('user_sid'); // Clear session cookie
   res.status(200).json({ message: 'Logged out' });
