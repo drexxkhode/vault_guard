@@ -8,8 +8,8 @@ function actLogger(event, description) {
       const clientIp = req.ip; 
       const forwardedFor = req.headers["x-forwarded-for"] || "";
   const agent = req.useragent || {};
-  const browser = agent.browser.toAgent() || "unknown";
-   const os = agent.os.toString() || "unknown";
+  const browser = agent.browser || "unknown";
+   const os = agent.os || "unknown";
 
       let userId = "anonymous";
       if (req.session?.user?.id) {
