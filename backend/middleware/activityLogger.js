@@ -10,6 +10,8 @@ function actLogger(event, description) {
   const agent = req.useragent || {};
   const browser = agent.browser || "unknown";
    const os = agent.os || "unknown";
+   const platform = agent.platform || "unknown";
+
 
       let userId = "anonymous";
       if (req.session?.user?.id) {
@@ -24,7 +26,8 @@ function actLogger(event, description) {
         browser,
         os,
         userId,
-        time: new Date(),
+        platform,
+               time: new Date(),
       };
 
       logger.info(logData);
