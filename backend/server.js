@@ -4,6 +4,7 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const dotenv = require('dotenv');
 const db = require('./db');
+const agent = require('express-useragent');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
 const logger = require('./service/logger');
@@ -11,6 +12,7 @@ const activityLogger=  require("./middleware/activityLogger");
 dotenv.config();
 
 const app = express();
+app.use(agent.express());
 app.use(helmet());
 app.use(express.json({ limit: '10mb' })); // Increase body size limit if needed
 app.use(express.urlencoded({ extended: true }));

@@ -1,4 +1,3 @@
-const useragent = require("useragent");
 const logger = require("../service/logger");
 const db = require("../db");
 
@@ -8,8 +7,9 @@ function actLogger(event, description) {
       // Make sure you have: app.set("trust proxy", true) in server.js
       const clientIp = req.ip; 
       const forwardedFor = req.headers["x-forwarded-for"] || "";
-
-      const agent = useragent.parse(req.headers["user-agent"]);
+  const agent = req.useragent || {};
+  const browser = agent.browser || "unknown";
+   const os = agent.os || "unknown";
 
       let userId = "anonymous";
       if (req.session?.user?.id) {
@@ -21,8 +21,8 @@ function actLogger(event, description) {
         description,
         clientIp,
         forwardedFor,
-        browser: agent.toAgent(),
-        os: agent.os.toString(),
+        browser,
+        os,
         userId,
         time: new Date(),
       };
