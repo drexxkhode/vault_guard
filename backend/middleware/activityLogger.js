@@ -27,14 +27,14 @@ function actLogger(event, description) {
         os,
         userId,
         platform,
-               time: new Date(),
+         time: new Date(),
       };
 
       logger.info(logData);
 
       const sql = `
         INSERT INTO logs 
-        (event_type, description, ip, forwarded_for, browser, os, user_id, time) 
+        (event_type, description, ip, forwarded_for, browser, os, platform,user_id, time) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
       await db.promise().query(sql, [
@@ -44,6 +44,7 @@ function actLogger(event, description) {
         logData.forwardedFor,
         logData.browser,
         logData.os,
+        logData.platform,
         logData.userId,
         logData.time,
       ]);
