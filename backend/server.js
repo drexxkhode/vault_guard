@@ -1,4 +1,5 @@
 const express = require('express');
+const expressIp = require('express-ip');
 const cors = require('cors');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
@@ -16,6 +17,8 @@ app.use(agent.express());
 app.use(helmet());
 app.use(express.json({ limit: '10mb' })); // Increase body size limit if needed
 app.use(express.urlencoded({ extended: true }));
+app.use(expressIp().getIpInfoMiddleware);
+
 const port = 5000;
 
 const sessionStore = new MySQLStore({}, db.promise());
@@ -50,6 +53,7 @@ app.post('/register', (req, res) => {
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
+  const ipInfo = req.ipInfo; // Contains IP and geolocation data
   const query = 'SELECT * FROM user WHERE username = ?';
   db.query(query, [username], async (err, results) => {
     if (err) return res.status(500).json({ error: err });
@@ -59,6 +63,10 @@ app.post('/login', async (req, res) => {
       if (match) {
         req.session.user = { id: user.id, username: user.username };
         activityLogger('LOGIN', `User logged in: ${user.username}`)(req, res, () => {});
+        logger.info({
+          ip: req.ip,
+          ipInfo: ipInfo
+        });
         res.status(200).json({ message: 'Logged in' });
       } else {
         activityLogger('FAILED LOGIN', `Failed login attempt for user: ${username}`)(req, res, () => {});

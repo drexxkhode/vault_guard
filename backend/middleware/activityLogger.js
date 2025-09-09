@@ -9,7 +9,7 @@ function activityLogger(eventType, description) {
       // Make sure you have: app.set("trust proxy", true) in server.js
       const clientIp = req.ip; 
       const forwardedFor = req.headers["x-forwarded-for"] || "";
-  const Browser2 = req.useragent.browser;
+      const Browser2 = req.useragent.browser;
       // Parse with ua-parser-js
       const parser = new UAParser(req.headers["user-agent"]);
       const result = parser.getResult();
