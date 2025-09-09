@@ -35,7 +35,7 @@ function actLogger(event, description) {
       const sql = `
         INSERT INTO logs 
         (event_type, description, ip, forwarded_for, browser, os, platform,user_id, time) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
       await db.promise().query(sql, [
         logData.event,
