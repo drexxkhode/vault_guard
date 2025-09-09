@@ -1,6 +1,6 @@
 const UAParser = require("ua-parser-js");
-const logger = require("./logger");
-const db = require("./db");
+const logger = require("../service/logger");
+const db = require("../db");
 
 function activityLogger(eventType, description) {
   return async function (req, res, next) {
