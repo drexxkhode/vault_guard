@@ -1,4 +1,5 @@
 const UAParser = require("ua-parser-js");
+  const useragent = require("express-useragent");
 const logger = require("../service/logger");
 const db = require("../db");
 
@@ -8,12 +9,12 @@ function activityLogger(eventType, description) {
       // Make sure you have: app.set("trust proxy", true) in server.js
       const clientIp = req.ip; 
       const forwardedFor = req.headers["x-forwarded-for"] || "";
-  
+  const Browser2 = req.useragent.browser;
       // Parse with ua-parser-js
       const parser = new UAParser(req.headers["user-agent"]);
       const result = parser.getResult();
 
-      const browser = `${result.browser.name || "Other"} ${result.browser.version || ""}`.trim();
+      const browser = `${result.browser.name || Browser2} ${result.browser.version || ""}`.trim();
       const os = `${result.os.name || "Other"} ${result.os.version || ""}`.trim();
 
       let userId = "Anonymous";
