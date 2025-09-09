@@ -20,6 +20,7 @@
     "express-useragent": "^1.0.15",
     "helmet": "^8.1.0",
     "mysql2": "^3.14.1",
+    "ua-parser-js": "^2.0.4",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
