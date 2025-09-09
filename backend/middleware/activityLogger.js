@@ -35,7 +35,7 @@ function activityLogger(eventType, description) {
       logger.info(logData);
 
       const sql =
-        "INSERT INTO logs (event_type, description, ip, forwarded_for, browser, os, user_id, time) VALUES (?,?,?,?,?,?,?)";
+        "INSERT INTO logs (event_type, description, ip, forwarded_for, browser, os, user_id, time) VALUES (?,?,?,?,?,?,?,?)";
 
       await db.promise().query(sql, [
         logData.eventType,
