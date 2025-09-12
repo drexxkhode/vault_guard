@@ -11,7 +11,6 @@ const helmet = require('helmet');
 const logger = require('./service/logger');
 const activityLogger=  require("./middleware/activityLogger");
 dotenv.config();
-
 const app = express();
 app.use(agent.express());
 app.use(helmet());
@@ -94,20 +93,19 @@ app.post('/logout', (req, res) => {
     return res.status(400).json({ message: 'No active session' });
   }
 
-  const username = req.session.user.username || 'Unknown';
+  const { id: userId, username } = req.session.user;
 
   // Run logger before destroying the session
-  activityLogger('LOGOUT', `User logged out: ${username}`)(req, res, () => {
-    req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ message: 'Logout failed' });
-      }
-
-      res.clearCookie('user_sid');
-      res.status(200).json({ message: 'Logged out' });
-    });
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Logout failed' });
+    }
+    activityLogger('LOGOUT', `User logged out: ${username}`,userId)(req, res, () => {});
+    
+    res.clearCookie('user_sid');
+   return res.status(200).json({ message: 'Logged out' });
   });
-});
+  });
 
 
 // API endpoint to get all registered users (for display)

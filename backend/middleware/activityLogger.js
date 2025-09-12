@@ -3,7 +3,7 @@ const UAParser = require("ua-parser-js");
 const logger = require("../service/logger");
 const db = require("../db");
 
-function activityLogger(eventType, description) {
+function activityLogger(eventType, description, forcedUserId=null) {
   return async function (req, res, next) {
     try {
       // Make sure you have: app.set("trust proxy", true) in server.js
@@ -17,11 +17,8 @@ function activityLogger(eventType, description) {
       const browser = `${result.browser.name || Browser2} ${result.browser.version || ""}`.trim();
       const os = `${result.os.name || "Other"} ${result.os.version || ""}`.trim();
 
-      let userId = "Anonymous";
-      if (req.session?.user?.id) {
-        userId = req.session.user.id;
-      }
-
+      let userId = forcedUserId || ( req.session?.user?.id ?? "Anonymous");
+      
       const logData = {
         eventType,
         description,
