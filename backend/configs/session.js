@@ -16,7 +16,7 @@ cookie: {
 maxAge: 1000 * 60 * 5,
 httpOnly: true,
 secure: true,
-sameSite: 'lax'
+sameSite: 'strict'
 
 }
 
