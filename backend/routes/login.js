@@ -20,6 +20,8 @@ login.post("/", async (req, res, next) => {
 
         if (isMatch) {
           req.session.user = { id: user.id, username: user.username };
+          console.log(req.session);
+          console.log(req.session.user);
           activityLogger("LOGIN", `${ToUpperUsername} LOGGED IN`)(req, res, () => {});
           return res.status(200).json({ message: "Authorized" });
         } else {
