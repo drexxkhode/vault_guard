@@ -10,7 +10,7 @@ const pool = mysql.createPool({
     queueLimit: 0,
     connectionLimit: 10,
     ssl:{
-        process.env.DB_CA_CERT
+        ca: process.env.DB_CA_CERT
     }
     
 });
