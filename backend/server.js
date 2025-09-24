@@ -94,8 +94,10 @@ app.use(cors);
 app.use(helmet);
 
 //MORGAN USAGE
+ app.use(morgan("tiny"));
 
-    app.use(morgan("tiny"));
+//TRUST PROXY (IF BEHIND A PROXY)
+app.set('trust proxy', 1);
 
 //SESSION CONFIG USAGE
 app.use(session);
