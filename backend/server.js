@@ -94,9 +94,9 @@ app.use(cors);
 app.use(helmet);
 
 //MORGAN USAGE
-if(process.env.NODE_ENV === "development"){
-    app.use(morgan("dev"));
-}
+
+    app.use(morgan("tiny"));
+
 //SESSION CONFIG USAGE
 app.use(session);
 
@@ -132,7 +132,6 @@ app.use(errors);
 
 //APP PORT USAGE
 app.listen(PORT, ()=>{
-console.log(`Server running on http://localhost:${PORT}`);
-console.log(`App status on http://localhost:${PORT}/status`);
+console.log(`Server running on ${PORT}`);
 
 });
