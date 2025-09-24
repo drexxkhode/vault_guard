@@ -1,123 +1,138 @@
-const express = require('express');
-const expressIp = require('express-ip');
-const cors = require('cors');
-const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
-const dotenv = require('dotenv');
-const db = require('./db');
-const agent = require('express-useragent');
-const bcrypt = require('bcryptjs');
-const helmet = require('helmet');
-const logger = require('./service/logger');
-const activityLogger=  require("./middleware/activityLogger");
-dotenv.config();
+//EXPRESS
+const express = require("express");
+
+// CSRF INC
+const crsf = require ("csurf");
+csrfProtection =  crsf();
+
+//MORGAN 
+const morgan = require("morgan");
+
+//ENVIRONMENT VARIABLE INC
+require("dotenv").config();
+
+//EXPRESS SESSION
+const session = require("./configs/session");
+
+//EXPRESS RATE LIMIT
+const limiter = require("./middlewares/rateLimit");
+
+//EXPRESS USERAGENT
+const useragent = require ("express-useragent");
+
+//CORS
+const cors = require("./middlewares/cors");
+
+//WINSTON (LOGS)
+const logger = require("./utils/logger");
+
+// HELMENT 
+const helmet= require("./middlewares/helmet");
+
+// GLOBAL ERROR MIDDLEWARE
+const errors = require ("./middlewares/errors");
+
+// LOGIN ROUTE
+const login = require("./routes/login");
+
+// DELETE ROUTE
+const deleteRoute =  require("./routes/delete");
+
+// UPDATE ROUTE
+const update = require("./routes/update");
+
+//SESSION ROUTE 
+const sessionRoute = require("./routes/session");
+
+//LOGOUT ROUTE
+const logout = require("./routes/logout");
+
+//REGISTER ROUTE
+const register = require("./routes/register");
+
+//FETCH DATA ROUTE
+const fetchData = require("./routes/fetcher");
+
+//SESSION AUTHENTICATE
+const isAuthenticated = require("./controllers/auth");
+
+//CSRF-TOKEN
+const csrfRoute = require("./middlewares/crsf");
+
+//JOI VALIDATION
+const validate  = require("./utils/joi");
+const registrationSchema = require("./schema/joi");
+
+//UPDATE FETCH ONE SITE
+const updateFectch = require('./routes/updateFetch');
+
+//EXPRESS STATUS MONITOR 
+const status = require("express-status-monitor");
+
+// APP PORT 
+const PORT = process.env.PORT || 5000 ;
+
+// EXPRESS APP
 const app = express();
-app.use(agent.express());
-app.use(helmet());
-app.use(express.json({ limit: '10mb' })); // Increase body size limit if needed
-app.use(express.urlencoded({ extended: true }));
-app.use(expressIp().getIpInfoMiddleware);
 
-const port = 5000;
+// JSON
+app.use(express.json({limit: "10mb"}));
 
-const sessionStore = new MySQLStore({}, db.promise());
+//FORMS
+app.use(express.urlencoded({extended:false }));
 
-app.use(cors({
-  origin: 'https://vaultguard-oa58.onrender.com', // adjust for your frontend
-  credentials: true,
-}));
-app.use(session({
-  key: 'user_sid',
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: sessionStore,
-  cookie: {
-    maxAge: 1000 * 60 * 20, // 1 day
-    httpOnly: true,
-    secure: true, // set to true if using https   
-    sameSite: 'lax', // adjust based on your needs
-  },
-}));
-app.set('trust proxy', 1); // if behind a proxy like nginx
+//EXPRESS USERAGENT GLOBAL USAGE
+app.use(useragent.express());
 
-app.post('/register', (req, res) => {
-  const { name,auth, password,status } = req.body;
-  const query = 'INSERT INTO website (name, auth,password,status) VALUES (?, ?,?,?)';
-  db.query(query, [name,auth, password,status], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.status(200).json({ message: 'Data Added Successfully' });
-  });
-});
+//EXPRESS STATUS MONITOR USAGE
+app.use(status());
 
-app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  const ipInfo = req.ipInfo; // Contains IP and geolocation data
-  const query = 'SELECT * FROM user WHERE username = ?';
-  db.query(query, [username], async (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    if (results.length > 0) {
-      const user = results[0];
-      const match = await bcrypt.compare(password, user.password);
-      if (match) {
-        req.session.user = { id: user.id, username: user.username };
-        activityLogger('LOGIN', `User logged in: ${user.username}`)(req, res, () => {});
-        logger.info({
-          ip: req.ip,
-          ipInfo: ipInfo
-        });
-        res.status(200).json({ message: 'Logged in' });
-      } else {
-        activityLogger('FAILED LOGIN', `Failed login attempt for user: ${username}`)(req, res, () => {});
-        res.status(401).json({ message: 'Invalid credentials' });
-      }
-    } else {
-      activityLogger('USER NOT FOUND', `Failed login attempt for user: ${username} and password: ${password}`)(req, res, () => {});
-      res.status(401).json({ message: 'Invalid credentials' });
-    }
-  });
-});
+//CORS USAGE
+app.use(cors);
 
-app.get('/session', (req, res) => {
-  if (req.session.user) {
-    res.json({ loggedIn: true, user: req.session.user });
-  } else {
-    res.json({ loggedIn: false });
-  }
-});
+//HELMET USAGE 
+app.use(helmet);
 
-app.post('/logout', (req, res) => {
-  // If no active session, just log anonymous logout attempt
-  if (!req.session.user) {
-    activityLogger('LOGOUT', `Logout attempt with no active session`)(req, res, () => {});
-    return res.status(400).json({ message: 'No active session' });
-  }
+//MORGAN USAGE
+if(process.env.NODE_ENV === "development"){
+    app.use(morgan("dev"));
+}
+//SESSION CONFIG USAGE
+app.use(session);
 
-  const { id: userId, username } = req.session.user;
+//CSRF TOKEN ENDPOINT USAGE
+app.use("/csrf-token", csrfProtection, csrfRoute);
 
-  // Run logger before destroying the session
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Logout failed' });
-    }
-    activityLogger('LOGOUT', `User logged out: ${username}`,userId)(req, res, () => {});
-    
-    res.clearCookie('user_sid');
-   return res.status(200).json({ message: 'Logged out' });
-  });
-  });
+//LOGIN ENDPOINT USAGE
+app.use("/login",limiter, csrfProtection, login );
 
+//DELETE ENDPOINT USAGE
+app.use("/delete",isAuthenticated, deleteRoute);
 
-// API endpoint to get all registered users (for display)
-app.get('/data', (req, res) => {
-  const query = 'SELECT * FROM website';
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.status(200).json(results);
-  });
-});
+//UPDATE ENDPOINT USAGE
+app.use('/update', isAuthenticated, update);
 
+//SESSION ENDPOINT USAGE
+app.use("/session",sessionRoute);
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+//LOGOUT ENDPOINT USAGE
+app.use("/logout", logout);
+
+//REGISTER ENDPOINT USAGE
+app.use("/register",isAuthenticated, register);
+
+//FETCH ALL DATA ENDPOINT USAGE
+app.use("/data", isAuthenticated, fetchData);
+
+//FETCH ONE SITE ENDPOINT USAGE
+app.use('/fetch', updateFectch);
+
+// GLOBAL ERROR USAGE 
+app.use(errors);
+
+//APP PORT USAGE
+app.listen(PORT, ()=>{
+console.log(`Server running on http://localhost:${PORT}`);
+console.log(`App status on http://localhost:${PORT}/status`);
+
 });
