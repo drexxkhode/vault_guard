@@ -124,10 +124,10 @@ app.use("/logout", logout);
 app.use("/register",isAuthenticated, register);
 
 //FETCH ALL DATA ENDPOINT USAGE
-app.use("/data", fetchData);
+app.use("/data", isAuthenticated, fetchData);
 
 //FETCH ONE SITE ENDPOINT USAGE
-app.use('/fetch', updateFectch);
+app.use('/fetch',isAuthenticated, updateFectch);
 
 // GLOBAL ERROR USAGE 
 app.use(errors);
