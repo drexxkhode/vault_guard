@@ -51,7 +51,6 @@ const fetchCsrfToken = async () => {
         setRetryAfter((prev) => {
           if (prev <= 1) {
             localStorage.removeItem("lockoutEnd");
-            fetchCsrfToken(); // Refresh CSRF token after lockout
             return 0;
           }
           return prev - 1;
