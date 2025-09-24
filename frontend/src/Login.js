@@ -70,7 +70,7 @@ const fetchCsrfToken = async () => {
         credentials: "include", // 👈 include session cookie
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken, // 👈 send token in header
+          //"X-CSRF-Token": csrfToken, 👈 send token in header
         },
         body: JSON.stringify({ username, password }),
       });
