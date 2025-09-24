@@ -124,7 +124,7 @@ app.use("/logout", logout);
 app.use("/register",isAuthenticated, register);
 
 //FETCH ALL DATA ENDPOINT USAGE
-app.use("/data", isAuthenticated, fetchData);
+app.use("/data", fetchData);
 
 //FETCH ONE SITE ENDPOINT USAGE
 app.use('/fetch', updateFectch);

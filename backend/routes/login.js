@@ -20,6 +20,7 @@ login.post("/", async (req, res, next) => {
 
         if (isMatch) {
           req.session.user = { id: user.id, username: user.username };
+          console.log(req.sessionID);
           console.log(req.session);
           console.log(req.session.user);
           activityLogger("LOGIN", `${ToUpperUsername} LOGGED IN`)(req, res, () => {});
