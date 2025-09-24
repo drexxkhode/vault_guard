@@ -1,4 +1,5 @@
 const errors = (err, req, res, next) => {
+  console.log(err);
   // Handle CSRF error
   if(res.headersSent){
     console.error("Headers already sent for this reponse ");
