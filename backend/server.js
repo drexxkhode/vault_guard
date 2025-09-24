@@ -97,7 +97,7 @@ app.use(helmet);
  app.use(morgan("tiny"));
 
 //TRUST PROXY (IF BEHIND A PROXY)
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
 
 //SESSION CONFIG USAGE
 app.use(session);

@@ -86,6 +86,7 @@ const DataTable = () => {
     try {
       const response = await fetch(`${API}/fetch/${id}`, {
         headers: { "Content-Type": "application/json" },
+        credentials: "include"
       });
 
       if (!response.ok) throw new Error("No site found");
