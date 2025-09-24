@@ -106,7 +106,7 @@ app.use(session);
 app.use("/csrf-token", csrfProtection, csrfRoute);
 
 //LOGIN ENDPOINT USAGE
-app.use("/login",limiter, csrfProtection, login );
+app.use("/login",limiter, login );
 
 //DELETE ENDPOINT USAGE
 app.use("/delete",isAuthenticated, deleteRoute);
