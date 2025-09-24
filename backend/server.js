@@ -115,7 +115,7 @@ app.use("/delete",isAuthenticated, deleteRoute);
 app.use('/update', isAuthenticated, update);
 
 //SESSION ENDPOINT USAGE
-app.use("/session",sessionRoute);
+app.use("/session", sessionRoute);
 
 //LOGOUT ENDPOINT USAGE
 app.use("/logout", logout);
