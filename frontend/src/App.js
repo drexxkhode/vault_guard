@@ -92,8 +92,8 @@ function App() {
           <DataTable />
         </div>
       </div>
-        <Footer />
-    </div>
+        
+            </div>
   );
 }
 
