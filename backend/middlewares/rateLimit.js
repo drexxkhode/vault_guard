@@ -6,7 +6,7 @@ const limiter=rateLimit({
     max: 5,
      handler: (req,res,next,options)=>{
 const resetTime = Math.ceil(options.windowMs / 1000);
-const retryAfter = res.getHeader('retry-After') || resetTime ;
+const retryAfter = res.getHeader('Retry-After') || resetTime ;
 activityLogger("BRUTE-FORCE ALERT", `BRUTE FORCE ALERT FROM IP ${req.ip}`)(req,res,()=>{});
 res.status(options.statusCode).json({
 status: 429,
