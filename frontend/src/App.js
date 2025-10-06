@@ -91,8 +91,8 @@ function App() {
           <Profile user={user} />
           <DataTable />
         </div>
-        <Footer />
       </div>
+        <Footer />
     </div>
   );
 }
